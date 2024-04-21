@@ -1,8 +1,10 @@
-# 01. 大模型常用微调方法LORA和Ptuning的原理
+# 01. 大模型常用微调方法LORA和Ptuning、Prefix-tuning、Ptuning-v2的原理
 
 Lora方法的核心是在大型语言模型上对指定参数增加额外的低秩矩阵，也就是在原始PLM旁边增加一个旁路，做一个降维再升维的操作。并在模型训练过程中，固定PLM的参数，只训练降维矩阵A与升维矩阵B。
 
 Ptuning方法的核心是使用可微的virtual token替换了原来的discrete tokens，且仅加入到输入层，并使用prompt encoder（BiLSTM+MLP）对virtual token进行编码学习。
+
+Ptuning https://zhuanlan.zhihu.com/p/635848732
 
 更详细请查阅[使用 LoRA（低阶适应）微调 LLM](https://zhuanlan.zhihu.com/p/672999750)
 
@@ -35,10 +37,14 @@ Stable Diffusion 总共包含三个主要的组件，其中每个组件都拥有
 大模型从模型架构上主要分为三种：Only-encoder, Only-Decoder, Encoder-Decoder三种模型架构
 
 - Only-encoder：例如BERT，通过在大规模无标签文本上进行预训练，然后在下游任务上进行微调，具有强大的语言理解能力和表征能力。
-
 - Only-Decoder: 例如GPT，通过在大规模无标签文本上进行预训练，然后在特定任务上进行微调，具有很强的生成能力和语言理解能力。
-
 - Encoder-Decoder：例如T5（Text-to-Text Transfer Transformer）可以用于多种自然语言处理任务，如文本分类、机器翻译、问答等。
+
+“
+
+https://kexue.fm/archives/9529/comment-page-1
+
+”
 
 而LLM之所以主要都用Decoder-only架构，除了训练效率和工程实现上的优势外，在理论上是因为Encoder的双向注意力会存在低秩问题，这可能会削弱模型表达能力，就生成任务而言，引入双向注意力并无实质好处。而Encoder-Decoder架构之所以能够在某些场景下表现更好，大概只是因为它多了一倍参数。所以，在同等参数量、同等推理成本下，Decoder-only架构就是最优选择了。
 
@@ -132,6 +138,7 @@ Transformer本身是一个典型的encoder-decoder模型，Encoder端和Decoder�
 - 在高质量数据上微调模型——在高质量数据上微调小型法学硕士模型已显示出有希望的结果，并有助于减少幻觉;
 - 上下文学习：使用上下文学习为模型提供更好的上下文;
 - 限制：将输出限制为受限列表，而不是自由浮动文本;
+- RAG
 
 [LLMS](https://medium.com/@masteringllm/4-interview-questions-on-large-language-models-llms-1447516a8db4)
 
@@ -261,6 +268,14 @@ Diffusion的缺点是在反向扩散过程中需要把完整尺寸的图片输�
 # 38. 如何解决chatglm微调的灾难性遗忘问题？
 
 https://zhuanlan.zhihu.com/p/628438318
+
+灾难性遗忘是LLM微调过程中最常见的问题，下面是一些解决办法：
+
+1. 将重要的权重冻结：像Lora就是采用的这种方案，只学习部分网络权重。但这里Lora的配置其实是要注意一下，如果你是用Lora做预训练，lora训练模块可以配上 q_proj,v_proj,k_proj,o_proj 如果是微调则只需要训练q_proj,v_proj。lora_rank的设置也有讲究，初始设lora_ran为8，训练存在遗忘时，可以将 lora_rank改为64（原因是与原模型数据领域相差较大的话，需要更大的秩，原论文有说明）
+2. 复习：跟人一样，在预训练或微调时，回看之前训练的数据。还可以专门把特征图存起来，量化以后放在一个类似于记忆库的地方，之后在新任务上训练的时候从这个记忆库里重构出记忆和新数据一起训练。感兴趣可以看这篇论文：REMIND Your Neural Network to Prevent
+   Catastrophic Forgetting
+3. MoE：稀疏门控制的专家混合层，最近爆出GPT4是由 8个220B的模型组合。但个人体验，阉割版的GPT4变得智障了很多
+4. 数据蒸馏：损失函数由teacher-student的KL loss和groud truth label构成
 
 # 40. GPT3、LLAMA的Layer Normalization 的区别是什么？
 

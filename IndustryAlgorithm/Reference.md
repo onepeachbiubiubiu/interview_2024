@@ -12,7 +12,7 @@
 
 - 相机坐标系，坐标原点在CCD/CMOS感光片的中央，单位是像素，内参（Intrinsics Matrix）主要就是描述这个坐标系的。
 
-- 照片坐标系，坐标原点在图片的左上角，单位是像素，横纵坐标轴一般不写成XY，而是uv。
+- 照片坐标系，     
 
 - 照片中的像素位置转换到世界坐标系时，要经历：Image_to_Camera, Camera_to_Ego, Ego_to_World；Camera_to_Image通常就是Intrinsics参数矩阵，Ego_to_Camera就是Extrinsics参数矩阵。
 
@@ -102,9 +102,9 @@ Bev就是鸟瞰图，从上往下看应该就是二维的一个平面。如果�
 # 25. BEVFormer中的Spatial Cross-Attention的步骤？
 
 Step 1 Lift each BEV query to be a pillar
-Step 2 Project the 3D points in pillar to 2D points in views
-Step 3 Sample features from regions in hit views
-Step 4 Fuse by weight
+	Step 2 Project the 3D points in pillar to 2D points in views
+	Step 3 Sample features from regions in hit views
+	Step 4 Fuse by weight
 
 # 26. 车上多个摄像头图像投影到2D平面如何实现？
 

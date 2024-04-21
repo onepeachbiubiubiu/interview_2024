@@ -2,7 +2,7 @@
 
 - 良心推荐[hello-algo](https://www.hello-algo.com/chapter_dynamic_programming/knapsack_problem/)
 
-- 包含多个通用的代码框架，一个框架完成多道题目，更详细请查阅[labuladong](https://labuladong.github.io/algo/di-san-zha-24031/bao-li-sou-96f79/yi-wen-mia-4f482/)
+- 包含多个通用的代码框架，一个框架完成多道题目，更详细请查阅[labuladong](https://labuladong.online/algo/)
 
 
 # 02. 大模型岗位面试总结：共24家，9个offer
